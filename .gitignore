@@ -1,0 +1,14 @@
+frontend/node_modules/
+
+backend/lib/
+frontend/node_modules/
+
+backend/sql_host.txt
+backend/venv/
+backend/pyvenv.cfg
+backend/bin
+backend/include
+
+docker-compose.yml
+DockerFile
+/.vscode

@@ -1,0 +1,11 @@
+
+# backend
+
+Flask==2.2.3
+Flask-Cors==3.0.10
+PyMySQL==1.0.2
+flask-login
+
+# frontend
+@vue/cli 
+@router@next==4.2.5
