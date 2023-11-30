@@ -21,9 +21,11 @@
     </div>
   </template>
   
-  <script>
-  import userRequest from 'axios'
-  
+<script>
+  // import axios from 'axios';
+  import axios from 'axios';
+  //import userRequest from '../../api'
+
   export default {
     name: "LoginView",
     data () {
@@ -36,7 +38,6 @@
     },
     methods: {
       login () {
-
         // 驗證
         if(this.user_id === ''){
           this.showIdEmpty = true;
@@ -49,8 +50,16 @@
           this.showPwEmpty = false;
         }
 
+        this.showIdEmpty = !this.user_id;
+        this.showPwEmpty = !this.password;
+
+
         //  如果都不是空的則寄出
         if(this.user_id && this.password){
+          const userRequest = axios.create({
+            baseURL: 'http://127.0.0.1:5000/'
+          });
+
           userRequest.post(
               '/login',{
               username: this.user_id,
@@ -73,5 +82,5 @@
       }
     }
   }
-  </script>
+</script>
   
