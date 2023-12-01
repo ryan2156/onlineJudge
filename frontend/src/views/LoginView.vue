@@ -22,9 +22,9 @@
   </template>
   
 <script>
-  // import axios from 'axios';
-  import axios from 'axios';
-  //import userRequest from '../../api'
+  import { login } from "@/api/login"
+  import router from "@/router"
+
 
   export default {
     name: "LoginView",
@@ -37,49 +37,12 @@
       }
     },
     methods: {
-      login () {
-        // 驗證
-        if(this.user_id === ''){
-          this.showIdEmpty = true;
-        } else{
-          this.showIdEmpty = false;
-        }
-        if(this.password === ''){
-          this.showPwEmpty = true;
-        } else{
-          this.showPwEmpty = false;
-        }
-
-        this.showIdEmpty = !this.user_id;
-        this.showPwEmpty = !this.password;
-
-
-        //  如果都不是空的則寄出
-        if(this.user_id && this.password){
-          const userRequest = axios.create({
-            baseURL: 'http://127.0.0.1:5000/'
-          });
-
-          userRequest.post(
-              '/login',{
-              username: this.user_id,
-              password: this.password
-            })
-          .then(response => {
-            if (response.data.success) {
-              // 登入成功，導航到主頁面
-              this.$router.push('/')
-            } else {
-              // 登入失敗，顯示錯誤消息
-              alert('用戶名或密碼錯誤。')
-            }
-          })
-          .catch(error => {
-            // 請求失敗，顯示錯誤消息
-            alert(error)
-          })
-        }
-      }
+      async submit(){                                           //新增
+            let res = await login(this.account, this.password)    //新增
+            if(res.status==0){                                    //新增
+                router.push({name:"home"})                        //新增
+            }                                                     //新增
+        } 
     }
   }
 </script>

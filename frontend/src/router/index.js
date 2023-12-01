@@ -6,7 +6,10 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: HomeView,
+    meta: {
+      needLogin: true // 是否已登入
+    }
   },
   {
     path: '/about',
@@ -26,6 +29,18 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
+})
+
+import { authToken } from '@/api/login'
+router.beforeResolve( async to=>{
+  if(to.meta.needLogin){
+      const isLogin = window.localStorage.getItem("isLogin")
+      if(!isLogin) return {name: "login"}
+      
+      const token = window.localStorage.getItem("token")
+      const authResult = await authToken(token)
+      if(!authResult.status) return {name: "login"}
+  }
 })
 
 export default router
