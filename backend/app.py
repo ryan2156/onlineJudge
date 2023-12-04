@@ -9,7 +9,6 @@ CORS(app)
 app.config["JWT_SECRET_KEY"] = 'adc'
 app.config["ENV"] = "development"
 app.config["DEBUG"] = True
-
 jwt.init_app(app)
 
 
@@ -21,9 +20,12 @@ def login():
     print(data)
     if(account == 'a' and password == 'b'):
         access_token = create_access_token(identity=account)
-        return jsonify({'success': True, 'access_token': access_token})
+        return jsonify({
+            'status': 0, 
+            'access_token': access_token
+        })
     
-    return jsonify({'success': False}), 402
+    return jsonify({'status': 1}), 402
     
 
 

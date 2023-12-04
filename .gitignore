@@ -9,6 +9,7 @@ backend/pyvenv.cfg
 backend/bin
 backend/include
 backend/.env
+backend/__pycache__
 
 docker-compose.yml
 DockerFile
