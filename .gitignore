@@ -8,6 +8,7 @@ backend/venv/
 backend/pyvenv.cfg
 backend/bin
 backend/include
+backend/.env
 
 docker-compose.yml
 DockerFile

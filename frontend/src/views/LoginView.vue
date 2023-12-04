@@ -1,13 +1,13 @@
 <template>
     <div>
       <h1>登入</h1>
-      <form @submit.prevent="login">
+      <form @submit.prevent="submit()">
         <div v-show="showIdEmpty">
           <p>帳號不能為空</p>
         </div>
         <div>
-          <label>用戶名：</label>
-          <input type="text" v-model="user_id">
+          <label>帳號：</label>
+          <input type="text" v-model="account">
         </div>
         <div v-show="showPwEmpty">
           <p>密碼不能為空</p>
@@ -23,26 +23,25 @@
   
 <script>
   import { login } from "@/api/login"
-  import router from "@/router"
-
+  import router from "../router/index.js"
 
   export default {
     name: "LoginView",
     data () {
       return {
-        user_id: '',
+        account: '',
         password: '',
         showIdEmpty: false,
         showPwEmpty: false,
       }
-    },
+    },  
     methods: {
-      async submit(){                                           //新增
-            let res = await login(this.account, this.password)    //新增
-            if(res.status==0){                                    //新增
-                router.push({name:"home"})                        //新增
-            }                                                     //新增
-        } 
+      async submit(){
+            let res = await login(this.account, this.password)
+            if(res.status==0){
+                router.push({name:"home"})
+            }
+        }
     }
   }
 </script>

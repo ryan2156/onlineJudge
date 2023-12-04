@@ -1,6 +1,6 @@
 import axios from "axios"
 
-async function login(userName, password){
+async function login(Account, password){
     const result= {
         status: 1,
         token: ""
@@ -8,7 +8,7 @@ async function login(userName, password){
 
     const url = "/api/login"
     const data = {
-        username: userName,
+        account: Account,
         password: password
     }
     const res = await axios.post(url, data)
@@ -18,7 +18,7 @@ async function login(userName, password){
         setLoginStore({
             isLogin: true,
             token: result.token,
-            userName: res.data.username
+            Account: res.data.account
         })
     }
 
@@ -29,7 +29,7 @@ async function authToken(token){
     const result = {
         status: "",
         token: "",
-        userName: ""
+        Account: ""
     }
     const url = "/api/auth"
     const data = {
@@ -39,17 +39,17 @@ async function authToken(token){
     if(res.status){
         result.status = "jwt verify success"
         result.token = res.data.token
-        result.userName = res.data.username
+        result.Account = res.data.account
         setLoginStore({
             isLogin: true,
             token: result.token,
-            userName: result.userName
+            Account: result.account
         })
     }else{
         setLoginStore({
             isLogin: false,
             token: "",
-            userName: ""
+            Account: ""
         })
     }
 
@@ -64,8 +64,8 @@ function setLoginStore(options){
     if(options.token){
         window.localStorage.setItem("token", options.token)
     }
-    if(options.userName){
-        window.localStorage.setItem("username", options.username)
+    if(options.Account){
+        window.localStorage.setItem("account", options.account)
     }
 }
 

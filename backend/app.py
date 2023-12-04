@@ -16,13 +16,14 @@ jwt.init_app(app)
 @app.route("/login", methods=['POST'])
 def login():
     data = request.get_json()
-    username = data.get('username')
+    account = data.get('account')
     password = data.get('password')
-    if(username == 'a' and password == 'b'):
-        access_token = create_access_token(identity=username)
+    print(data)
+    if(account == 'a' and password == 'b'):
+        access_token = create_access_token(identity=account)
         return jsonify({'success': True, 'access_token': access_token})
     
-    return jsonify({'success': False}), 401
+    return jsonify({'success': False}), 402
     
 
 
