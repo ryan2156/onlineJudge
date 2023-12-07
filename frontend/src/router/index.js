@@ -1,15 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import Loginview from '../views/LoginView.vue'
+import LoginView from "../views/LoginView.vue"
+import TestView from '../views/TestView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'home',
     component: HomeView,
-    meta: {
-      needLogin: true // 是否已登入
-    }
+    // meta: {
+    //   needLogin: true
+    // }
   },
   {
     path: '/about',
@@ -17,12 +18,17 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import('../views/AboutView.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   },
   {
     path: '/login',
     name: 'login',
-    component: Loginview
+    component: LoginView
+  },
+  {
+    path: '/test',
+    name: 'test',
+    component: TestView
   }
 ]
 

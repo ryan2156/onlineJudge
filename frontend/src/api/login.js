@@ -36,7 +36,7 @@ async function authToken(token){
         token: token
     }
     const res = await axios.post(url, data)
-    if(res.status){
+    if(!res.status){
         result.status = "jwt verify success"
         result.token = res.data.token
         result.Account = res.data.account
