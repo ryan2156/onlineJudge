@@ -8,9 +8,9 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomeView,
-    // meta: {
-    //   needLogin: true
-    // }
+    meta: {
+      needLogin: true
+    }
   },
   {
     path: '/about',
