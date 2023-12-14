@@ -8,9 +8,9 @@ const routes = [
     path: '/',
     name: 'home',
     component: HomeView,
-    meta: {
-      needLogin: true
-    }
+    // meta: {
+    //   needLogin: true
+    // }
   },
   {
     path: '/about',
@@ -29,6 +29,11 @@ const routes = [
     path: '/test',
     name: 'test',
     component: TestView
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('../views/RegisterView.vue')
   }
 ]
 
