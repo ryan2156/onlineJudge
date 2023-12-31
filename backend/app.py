@@ -1,12 +1,11 @@
-from flask import Flask, jsonify, request
-from flask_jwt_extended import JWTManager, create_access_token
+from flask import Flask, jsonify, request, Blueprint
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, decode_token
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import subprocess
-from werkzeug.security import generate_password_hash
 from flask_login import login_user, current_user, login_required
 
 load_dotenv()
@@ -47,7 +46,7 @@ class Question(db.Model):
     question_number = db.Column(db.String(50), unique=True, nullable=False)
     description = db.Column(db.Text, nullable=False)
     input_format = db.Column(db.Text, nullable=False)
-    output_format = db.Column(db.Text, nullable=False)
+    output_format =   db.Column(db.Text, nullable=False)
     answer = db.Column(db.Text, nullable=False)
 
 @app.route("/login", methods=['POST'])
@@ -56,16 +55,38 @@ def login():
     account = data.get('account')
     password = data.get('password')
     user = Users.query.filter_by(account=account).first()
-    print(user)
-    print(account,password)
     if user and user.check_password(password):
         access_token = create_access_token(identity=account)
+        payload = decode_token(access_token)
+        print(payload['sub'])
         return jsonify({
             'status': 0, 
             'access_token': access_token,
             'account': account
-        })
+        }), 200
     return jsonify({'status': 1}), 301
+
+# 新增`auth`藍圖
+auth_bp = Blueprint('/auth', __name__)
+# 新增`/api/auth`路由進行token驗證
+@auth_bp.route('/auth', methods=['POST'])
+@jwt_required(optional=True) # 使用@jwt_required裝飾器保護此路由
+def auth():
+    data = request.get_json()
+    print(data)
+    token = data.get('token')
+    account = data.get('account')
+    print("origin: ",account)
+    print("verify: ", decode_token(token)['sub'])
+    
+    # 驗證token
+    if(account == decode_token(token)['sub']):  
+        return jsonify({'status': 0, 'token': token}), 200
+    else:
+        return jsonify({'status': 1}), 401
+
+# 將藍圖註冊到app
+app.register_blueprint(auth_bp)
 
 @app.route("/register", methods=['POST'])
 def register():
@@ -76,7 +97,7 @@ def register():
     name = data.get('name')
     user = Users.query.filter_by(account=account).first()
     if user:
-        return jsonify({'status': 1, 'message': 'Account already exists'}), 400
+        return jsonify({'status': 1, 'message': 'Account already exists'}), 409
 
     # 創建新用戶
     new_user = Users(account, password, score, name)
@@ -109,6 +130,7 @@ def submit():
     run_result.stdout.decode()
 
     return jsonify({'status': 0, 'message': 'Code submitted successfully', 'output': run_result.stdout.decode()}), 201
+
 
 if __name__ == "__main__":
     app.debug = True

@@ -9,11 +9,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, index) in ques" :key="index">
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.title }}</td>
-                    <td>{{ item.last_name }}</td>
-                </tr>
+                <router-link>
+                    <tr v-for="(item, index) in ques" :key="index">
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.last_name }}</td>
+                    </tr>
+                </router-link>   
             </tbody>
             
         </table>
