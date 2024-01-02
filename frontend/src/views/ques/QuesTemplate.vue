@@ -56,10 +56,6 @@ export default{
         async submit(){
             const code = this.code;
 
-            const blob = new Blob([code], {
-                type: 'text/plain',
-            });
-
             const data = {
                 headers: {
                     'Authorization': window.localStorage.getItem('token'),
@@ -70,9 +66,7 @@ export default{
                     type: 'text/plain'
                 })
             }
-            
-            const token = window.localStorage.getItem('token');
-            const account = window.localStorage.getItem('account')
+
             
             const url = 'http://127.0.0.1:5000/register'
             const res = axios.post(url, data)
@@ -87,20 +81,6 @@ export default{
                 }
             }
 
-            axios.post('http://localhost:5000/submit', blob, {
-            headers: {
-                'Content-Type': 'text/plain',
-                'Authorization': `Bearer ${token}`,
-                'account': account,
-                'ques_id': 1
-            },
-            })
-            .then((response) => {
-                this.result = response
-            })
-            .catch((error) => {
-                this.result = error
-            });
         }
     }
 }
