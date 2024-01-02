@@ -22,7 +22,7 @@
             </div>
             <div class="col">
                 <h2>作答區</h2>
-                <form class="mb-3">
+                <form class="mb-3" @submit.prevent="submit()">
                     <textarea class="form-control" id="exampleFormControlTextarea1" rows="8" v-model="code"></textarea>
                     <div class="col-auto">
                         <button type="submit" class="btn btn-primary mb-3">寄出</button>
