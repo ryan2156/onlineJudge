@@ -120,85 +120,61 @@ def register():
 
     return jsonify({'status': 0, 'message': 'Account created successfully'}), 201
 
+def evaluate_submission(question, user, file):
+    command = ["python", f"Q{question}.py"]
+    #import answer part
+    with open(f"input/Q{question}.txt", 'r') as input_file:
+        #file_content = input_file.read()
+        #print(file_content)
+        line = input_file.readline()
+        while line:
+            result = subprocess.run(command, input=line, stdout=subprocess.PIPE, text=True)
+            output = result.stdout.strip()
+            with open(f"uploads/Q{question}.txt", 'a') as output_file:
+                output_file.write(output)
+                output_file.write("\n")
+            line = input_file.readline()
+
+    os.remove(file) #刪掉檔案
+
+    with open(f"answer/Q{question}.txt", 'r', encoding='utf-8') as file1:
+        content1 = file1.readlines()
+
+    with open(f"uploads/Q{question}.txt", 'r', encoding='utf-8') as file2:
+        content2 = file2.readlines()
+
+    if content1 == content2:
+        user.update_score(100)
+        print("Success")
+
 @app.route("/submit", methods=['POST'])
 def submit():
-    print(request.headers['ques_id'])
-    code_blob = request.data
-    print(code_blob.decode('utf-8'))
-    #print(request.files)
-    #if 'file' not in request.files:
-    #    return jsonify({'error': 'No file part'}), 888
+    try:
+        print(123)
+        print(request.data.decode('utf-8'))
+        print(request.headers)
+        token = decode_token(request.headers['Authorization'])['sub']
+        print(token)
+        user = Users.query.filter_by(account=token).first()
+        print(1)
+        question_id = 1
+        #question_id = request.form['ques_id']
+        question_filename = f"Q{question_id}.py"  # 假设是 Python 代码
 
-    #file = request.files['file']
-    question = request.form['ques_id']
-    #token = decode_token(request.form['Authorization'])['sub']
-    print(question)
-    #user = Users.query.filter_by(account=token).first()
-    code_str = code_blob.decode('utf-8')
-    print(code_str)
-    #if file.filename == '':
-    #    return jsonify({'error': 'No selected file'}), 405
+        code_blob = request.data
+        code_str = code_blob.decode('utf-8')
 
-    #filename = secure_filename(file.filename)
-    #upload_folder = os.path.join(os.getcwd(), 'uploads')
-    #os.makedirs(upload_folder, exist_ok=True) #確保資料夾存在
-#
-    #file_path = os.path.join(upload_folder, file.filename)
-    #file.save(file_path)
-#
-    #command = ["python", file.filename]
-    ##import answer part
-    #with open(f"input/Q{question}.txt", 'r') as input_file:
-    #    #file_content = input_file.read()
-    #    #print(file_content)
-    #    line = input_file.readline()
-    #    while line:
-    #        result = subprocess.run(command, input=line, stdout=subprocess.PIPE, text=True)
-    #        output = result.stdout.strip()
-    #        with open(f"uploads/Q{question}.txt", 'a') as output_file:
-    #            output_file.write(output)
-    #            output_file.write("\n")
-    #        line = input_file.readline()
-#
-    #os.remove(file_path) #刪掉檔案
-#
-    #with open(f"answer/Q{question}.txt", 'r', encoding='utf-8') as file1:
-    #    content1 = file1.readlines()
-#
-    #with open(f"uploads/Q{question}.txt", 'r', encoding='utf-8') as file2:
-    #    content2 = file2.readlines()
-#
-    #if content1 == content2:
-    #    user.update_score(100)
-    #    print("Success")
-#
-    #return jsonify({'message': 'Success'}), 200
-    #
-#    data = request.get_json()
-#    question_number = data.get('question_number')
-#    cpp_code = data.get('cpp_code')
-#
-#    # 將程式碼寫入一個.cpp檔案
-#    with open('code.cpp', 'w') as file:
-#        file.write(cpp_code)
-#
-#    # 編譯程式碼
-#    compile_result = subprocess.run(['g++', 'code.cpp', '-o', 'code'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#    if compile_result.returncode != 0:
-#        return jsonify({'status': 1, 'message': 'Compilation error', 'error': compile_result.stderr.decode()}), 400
-#
-#    # 執行程式碼並捕獲輸出
-#    run_result = subprocess.run(['./code'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#    if run_result.returncode != 0:
-#        return jsonify({'status': 1, 'message': 'Runtime error', 'error': run_result.stderr.decode()}), 400
-#
-#    # 在這裡添加程式碼的評估邏輯
-#    run_result.stdout.decode()
-#
-#    return jsonify({'status': 0, 'message': 'Code submitted successfully', 'output': run_result.stdout.decode()}), 201
+        code_file_path = os.path.join("uploads", question_filename)
+        with open(code_file_path, 'w') as code_file:
+            code_file.write(code_str)
 
+        evaluate_submission(question_id, user, code_file_path)
 
+        return jsonify({'status': 0,'message': 'Success'}), 200
 
+    except Exception as e:
+        print(e)
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == "__main__":
     app.debug = True
