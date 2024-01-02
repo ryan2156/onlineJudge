@@ -69,4 +69,4 @@ function setLoginStore(options){
     }
 }
 
-export {login, authToken}
+export {login, authToken, setLoginStore}

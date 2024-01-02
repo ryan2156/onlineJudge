@@ -53,22 +53,45 @@ export default{
         }
     },
     methods: {
-        submit(){
+        async submit(){
             const code = this.code;
 
             const blob = new Blob([code], {
                 type: 'text/plain',
             });
+
+            const data = {
+                headers: {
+                    'Authorization': window.localStorage.getItem('token'),
+                    'ques_id': 1,
+                    'Content-Type': 'text/plain'
+                },
+                blob: new Blob([code], {
+                    type: 'text/plain'
+                })
+            }
             
             const token = window.localStorage.getItem('token');
             const account = window.localStorage.getItem('account')
+            
+            const url = 'http://127.0.0.1:5000/register'
+            const res = axios.post(url, data)
+
+            try{
+                if(!(await res.status)){
+                    this.result = "succes"
+                }
+            } catch(error){
+                if(error.response.status === 1){
+                    this.result = "fail"
+                }
+            }
 
             axios.post('http://localhost:5000/submit', blob, {
             headers: {
-                'Content-Type': 'application/octet-stream',
-                'Content-Disposition': 'attachment; filename=response.txt',
+                'Content-Type': 'text/plain',
                 'Authorization': `Bearer ${token}`,
-                'accoun': account,
+                'account': account,
                 'ques_id': 1
             },
             })

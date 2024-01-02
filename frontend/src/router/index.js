@@ -48,12 +48,14 @@ const router = createRouter({
   routes
 })
 
-import { authToken } from '@/api/login'
+import { authToken, setLoginStore } from '@/api/login'
 router.beforeResolve( async to=>{
   if(to.meta.needLogin){
       const isLogin = window.localStorage.getItem("isLogin")
       
-      if(!isLogin) return {name: "login"}
+      if(!isLogin){
+        return {name: "login"}
+      } 
       
       const account = window.localStorage.getItem("account")
       const token = window.localStorage.getItem("token")
@@ -61,7 +63,11 @@ router.beforeResolve( async to=>{
       const authResult = await authToken(account, token)
       console.log("after: ", authResult)
       if(!authResult.status){
-        
+        setLoginStore({
+          isLogin: false,
+          token: "",
+          Account: ""
+        })
         return {name: "login"}
       } 
   }
