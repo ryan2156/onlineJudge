@@ -2,15 +2,16 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from "../views/LoginView.vue"
 import TestView from '../views/TestView.vue'
+import QuesTemplate from '../views/ques/QuesTemplate.vue'
 
 const routes = [
   {
     path: '/',
     name: 'home',
     component: HomeView,
-    // meta: {
-    //   needLogin: true
-    // }
+    meta: {
+      needLogin: true
+    }
   },
   {
     path: '/about',
@@ -34,6 +35,11 @@ const routes = [
     path: '/register',
     name: 'register',
     component: () => import('../views/RegisterView.vue')
+  },
+  {
+    path: '/ques/question',
+    name: 'question',
+    component: QuesTemplate
   }
 ]
 
@@ -46,11 +52,18 @@ import { authToken } from '@/api/login'
 router.beforeResolve( async to=>{
   if(to.meta.needLogin){
       const isLogin = window.localStorage.getItem("isLogin")
+      
       if(!isLogin) return {name: "login"}
       
+      const account = window.localStorage.getItem("account")
       const token = window.localStorage.getItem("token")
-      const authResult = await authToken(token)
-      if(!authResult.status) return {name: "login"}
+
+      const authResult = await authToken(account, token)
+      console.log("after: ", authResult)
+      if(!authResult.status){
+        
+        return {name: "login"}
+      } 
   }
 })
 

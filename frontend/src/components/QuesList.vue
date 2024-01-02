@@ -1,5 +1,6 @@
 <template>
     <div>
+        <h2>123</h2>
         <table class="table">
             <thead>
                 <tr>
@@ -9,11 +10,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(item, index) in ques" :key="index">
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.title }}</td>
-                    <td>{{ item.last_name }}</td>
-                </tr>
+                <router-link>
+                    <tr v-for="(item, index) in ques" :key="index">
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.last_name }}</td>
+                    </tr>
+                </router-link>   
             </tbody>
             
         </table>
@@ -21,16 +24,12 @@
 </template>
 
 <script>
+    import axios from 'axios';
     export default{
         name: 'QuesList',
         data(){
             return{
-                ques: [
-                    { id: 40, title: 'Dickerson', last_name: 'Macdonald' },
-                    { id: 21, title: 'Larsen', last_name: 'Shaw' },
-                    { id: 89, title: 'Geneva', last_name: 'Wilson' },
-                    { id: 38, title: 'Jami', last_name: 'Carney' }
-                ]
+                ques: axios.get('http://localhost:5000')
             }
             
         }

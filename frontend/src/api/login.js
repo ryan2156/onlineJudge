@@ -13,7 +13,6 @@ async function login(Account, password){
     }
     const res = await axios.post(url, data)
     if(!res.data.status){
-        console.log('a');
         result.status = 0;
         result.token = res.data.access_token;
         setLoginStore({
@@ -25,7 +24,7 @@ async function login(Account, password){
     return result
 }
 
-async function authToken(token){
+async function authToken(account, token){
     const result = {
         status: "",
         token: "",
@@ -33,10 +32,11 @@ async function authToken(token){
     }
     const url = "/api/auth"
     const data = {
-        token: token
+        token: token,
+        account: account
     }
     const res = await axios.post(url, data)
-    if(!res.status){
+    if(!res.data.status){
         result.status = "jwt verify success"
         result.token = res.data.access_token
         result.Account = res.data.account
@@ -52,7 +52,7 @@ async function authToken(token){
             Account: ""
         })
     }
-    console.log(result);
+    console.log("res: ", res)
     return result
 }
 
