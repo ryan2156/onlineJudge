@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import subprocess
 from flask_login import login_user, current_user, login_required
+from werkzeug.utils import secure_filename
 
 load_dotenv()
 jwt = JWTManager()
@@ -121,52 +122,58 @@ def register():
 
 @app.route("/submit", methods=['POST'])
 def submit():
-    print(request)
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 888
+    print(request.headers['ques_id'])
+    code_blob = request.data
+    print(code_blob.decode('utf-8'))
+    #print(request.files)
+    #if 'file' not in request.files:
+    #    return jsonify({'error': 'No file part'}), 888
 
-    file = request.files['file']
+    #file = request.files['file']
     question = request.form['ques_id']
-    token = decode_token(request.form['Authorization'])['sub']
-    user = Users.query.filter_by(account=token).first()
+    #token = decode_token(request.form['Authorization'])['sub']
+    print(question)
+    #user = Users.query.filter_by(account=token).first()
+    code_str = code_blob.decode('utf-8')
+    print(code_str)
+    #if file.filename == '':
+    #    return jsonify({'error': 'No selected file'}), 405
 
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 405
-
-    upload_folder = os.path.join(os.getcwd(), 'uploads')
-    os.makedirs(upload_folder, exist_ok=True) #確保資料夾存在
-
-    file_path = os.path.join(upload_folder, file.filename)
-    file.save(file_path)
-
-    command = ["python", file.filename]
-    #import answer part
-    with open(f"input/Q{question}.txt", 'r') as input_file:
-        #file_content = input_file.read()
-        #print(file_content)
-        line = input_file.readline()
-        while line:
-            result = subprocess.run(command, input=line, stdout=subprocess.PIPE, text=True)
-            output = result.stdout.strip()
-            with open(f"uploads/Q{question}.txt", 'a') as output_file:
-                output_file.write(output)
-                output_file.write("\n")
-            line = input_file.readline()
-
-    os.remove(file_path) #刪掉檔案
-
-    with open(f"answer/Q{question}.txt", 'r', encoding='utf-8') as file1:
-        content1 = file1.readlines()
-
-    with open(f"uploads/Q{question}.txt", 'r', encoding='utf-8') as file2:
-        content2 = file2.readlines()
-
-    if content1 == content2:
-        user.update_score(100)
-        print("Success")
-
-    return jsonify({'message': 'Success'}), 200
-    
+    #filename = secure_filename(file.filename)
+    #upload_folder = os.path.join(os.getcwd(), 'uploads')
+    #os.makedirs(upload_folder, exist_ok=True) #確保資料夾存在
+#
+    #file_path = os.path.join(upload_folder, file.filename)
+    #file.save(file_path)
+#
+    #command = ["python", file.filename]
+    ##import answer part
+    #with open(f"input/Q{question}.txt", 'r') as input_file:
+    #    #file_content = input_file.read()
+    #    #print(file_content)
+    #    line = input_file.readline()
+    #    while line:
+    #        result = subprocess.run(command, input=line, stdout=subprocess.PIPE, text=True)
+    #        output = result.stdout.strip()
+    #        with open(f"uploads/Q{question}.txt", 'a') as output_file:
+    #            output_file.write(output)
+    #            output_file.write("\n")
+    #        line = input_file.readline()
+#
+    #os.remove(file_path) #刪掉檔案
+#
+    #with open(f"answer/Q{question}.txt", 'r', encoding='utf-8') as file1:
+    #    content1 = file1.readlines()
+#
+    #with open(f"uploads/Q{question}.txt", 'r', encoding='utf-8') as file2:
+    #    content2 = file2.readlines()
+#
+    #if content1 == content2:
+    #    user.update_score(100)
+    #    print("Success")
+#
+    #return jsonify({'message': 'Success'}), 200
+    #
 #    data = request.get_json()
 #    question_number = data.get('question_number')
 #    cpp_code = data.get('cpp_code')
