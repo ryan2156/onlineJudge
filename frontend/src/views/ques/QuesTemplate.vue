@@ -68,7 +68,7 @@ export default{
                 'Content-Type': 'application/octet-stream',
                 'Content-Disposition': 'attachment; filename=response.txt',
                 'Authorization': `Bearer ${token}`,
-                'account': account,
+                'accoun': account,
                 'ques_id': 1
             },
             })
