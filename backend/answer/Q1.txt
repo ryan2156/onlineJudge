@@ -1,1 +1,3 @@
 Hello, C++\n
+Hello, python\n
+Hello, taiwan\n

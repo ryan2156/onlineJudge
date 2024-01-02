@@ -54,7 +54,6 @@ export default{
     },
     methods: {
         async submit(){
-            const code = this.code;
 
             const data = {
                 headers: {
@@ -62,13 +61,11 @@ export default{
                     'ques_id': 1,
                     'Content-Type': 'text/plain'
                 },
-                blob: new Blob([code], {
-                    type: 'text/plain'
-                })
+                code: this.code
             }
 
             
-            const url = 'http://127.0.0.1:5000/register'
+            const url = 'http://127.0.0.1:5000/submit'
             const res = axios.post(url, data)
 
             try{

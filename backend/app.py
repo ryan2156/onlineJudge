@@ -120,57 +120,75 @@ def register():
 
     return jsonify({'status': 0, 'message': 'Account created successfully'}), 201
 
-def evaluate_submission(question, user, file):
-    command = ["python", f"Q{question}.py"]
+def evaluate_submission(question, user):
+    err_code = 0
+    command = ["python", f"uploads/Q{question}.py"]
     #import answer part
     with open(f"input/Q{question}.txt", 'r') as input_file:
         #file_content = input_file.read()
         #print(file_content)
         line = input_file.readline()
+        print(line)
         while line:
-            result = subprocess.run(command, input=line, stdout=subprocess.PIPE, text=True)
-            output = result.stdout.strip()
-            with open(f"uploads/Q{question}.txt", 'a') as output_file:
-                output_file.write(output)
-                output_file.write("\n")
-            line = input_file.readline()
+            try:
+                result = subprocess.run(command, input=line, stdout=subprocess.PIPE, text=True)
+                output = result.stdout.strip() if result.stdout is not None else ""
+                error_output = result.stderr.strip() if result.stderr is not None else ""
+                print(error_output)
+                if error_output:
+                    print(error_output)
+                    err_code = 1
+                with open(f"uploads/Q{question}.txt", 'a') as output_file:
+                    output_file.write(output)
+                    output_file.write("\n")
+                line = input_file.readline()
+            except Exception as e:
+                err_code = 1
+                print(e)
 
-    os.remove(file) #刪掉檔案
+    os.remove(f"uploads/Q{question}.py") #刪掉檔案
 
     with open(f"answer/Q{question}.txt", 'r', encoding='utf-8') as file1:
         content1 = file1.readlines()
 
     with open(f"uploads/Q{question}.txt", 'r', encoding='utf-8') as file2:
         content2 = file2.readlines()
-
-    if content1 == content2:
+    print(err_code)
+    if content1 == content2 and err_code == 0:
+        os.remove(f"uploads/Q{question}.txt")
         user.update_score(100)
         print("Success")
+        return 0
+    else:
+        os.remove(f"uploads/Q{question}.txt")
+        return 1
+     #刪掉檔案
 
 @app.route("/submit", methods=['POST'])
 def submit():
     try:
-        print(123)
-        print(request.data.decode('utf-8'))
-        print(request.headers)
-        token = decode_token(request.headers['Authorization'])['sub']
-        print(token)
-        user = Users.query.filter_by(account=token).first()
-        print(1)
+        #print(123)
+        #print(request.data.decode('utf-8'))
+        #print(request.headers)
+        data = request.get_json()
+        token = data['headers']['Authorization']
+        print(decode_token(token)['sub'])
+        user = Users.query.filter_by(account=decode_token(token)['sub']).first()
         question_id = 1
         #question_id = request.form['ques_id']
         question_filename = f"Q{question_id}.py"  # 假设是 Python 代码
+        print(123)
+        code_str = data['code']
+        #print(code_blob)
 
-        code_blob = request.data
-        code_str = code_blob.decode('utf-8')
-
-        code_file_path = os.path.join("uploads", question_filename)
-        with open(code_file_path, 'w') as code_file:
+        #code_file_path = os.path.join("uploads", question_filename)
+        with open(f"uploads/Q{question_id}.py", 'w') as code_file:
             code_file.write(code_str)
 
-        evaluate_submission(question_id, user, code_file_path)
-
-        return jsonify({'status': 0,'message': 'Success'}), 200
+        if evaluate_submission(question_id, user) == 0:
+            return jsonify({'status': 0,'message': 'Success'}), 200
+        else:
+            return jsonify({'status': 1,'message': 'Success'}), 201
 
     except Exception as e:
         print(e)
