@@ -54,14 +54,14 @@ class Question(db.Model):
     output_format =   db.Column(db.Text, nullable=False)
     answer = db.Column(db.Text, nullable=False)
 
-@app.route("/grr", methods=['POST'])
-def grr():
-    data = request.get_json()
-    account = data.get('account')
-    access_token = create_access_token(identity=account)
-    payload = decode_token(access_token)
-    print(payload['sub'])
-    print(create_access_token(identity=account))
+# @app.route("/grr", methods=['POST'])
+# def grr():
+#     data = request.get_json()
+#     account = data.get('account')
+#     access_token = create_access_token(identity=account)
+#     payload = decode_token(access_token)
+#     print(payload['sub'])
+#     print(create_access_token(identity=account))
 
 @app.route("/login", methods=['POST'])
 def login():
@@ -188,7 +188,7 @@ def submit():
         if evaluate_submission(question_id, user) == 0:
             return jsonify({'status': 0,'message': 'Success'}), 200
         else:
-            return jsonify({'status': 1,'message': 'Success'}), 201
+            return jsonify({'status': 1,'message': 'Fail'}), 201
 
     except Exception as e:
         print(e)
@@ -201,3 +201,4 @@ if __name__ == "__main__":
     #for user in users:
     #    print(user.account)  # 打印每個用戶的帳號
     app.run()
+
