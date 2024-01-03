@@ -61,7 +61,7 @@ router.beforeResolve( async to=>{
       const token = window.localStorage.getItem("token")
 
       const authResult = await authToken(account, token)
-      console.log("after: ", authResult)
+      console.log("after: ", authResult.status)
       if(!authResult.status){
         setLoginStore({
           isLogin: false,

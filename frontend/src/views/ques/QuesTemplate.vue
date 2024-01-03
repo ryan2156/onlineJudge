@@ -68,14 +68,11 @@ export default{
             const url = 'http://127.0.0.1:5000/submit'
             const res = axios.post(url, data)
 
-            try{
-                if(!(await res.status)){
-                    this.result = "succes"
-                }
-            } catch(error){
-                if(error.response.status === 1){
-                    this.result = "fail"
-                }
+            if((await res).status === 0){
+                this.result = "Answer Correct"
+            }
+            else {
+                this.result = "Fail"
             }
 
         }

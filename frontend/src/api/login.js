@@ -26,7 +26,7 @@ async function login(Account, password){
 
 async function authToken(account, token){
     const result = {
-        status: "",
+        status: "fail",
         token: "",
         Account: ""
     }
@@ -35,8 +35,9 @@ async function authToken(account, token){
         token: token,
         account: account
     }
+    console.log("12")
     const res = await axios.post(url, data)
-    if(!res.data.status){
+    if(res.data.status === 0){
         result.status = "jwt verify success"
         result.token = res.data.access_token
         result.Account = res.data.account
